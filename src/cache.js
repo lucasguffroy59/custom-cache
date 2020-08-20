@@ -1,4 +1,4 @@
-export default class Cache {
+class Cache {
   constructor(size = 100, permissive = false) {
     const self = this;
     self.size = size;
@@ -85,3 +85,5 @@ export default class Cache {
     return this.cacheStorage;
   }
 }
+
+module.exports = { Cache }

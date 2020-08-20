@@ -32,4 +32,4 @@ const cleanObject = (object) => {
   return newObject;
 };
 
-export default { cleanObject, deepCloneObject, isObject };
+module.exports = { cleanObject, deepCloneObject, isObject };
