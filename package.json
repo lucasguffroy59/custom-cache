@@ -1,0 +1,24 @@
+{
+  "name": "custom-cache",
+  "version": "0.0.1",
+  "description": "Custom cache module for advanced memoization purposes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --max-warnings=0 ."
+  },
+  "keywords": [
+    "cache",
+    "memoize",
+    "memoization"
+  ],
+  "author": "Lucas Guffroy",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.21.2"
+  },
+  "sideEffects": false
+}
