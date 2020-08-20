@@ -1,6 +1,6 @@
 {
   "name": "custom-cache",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Custom cache module for advanced memoization purposes",
   "main": "index.js",
   "type": "module",
