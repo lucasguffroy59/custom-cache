@@ -1,2 +1,3 @@
-# custom-cache
-Cache module for memoization purposes
+## custom-cache
+### ⚠️ Work in progress ⚠️
+Personal project to learn advanced memoization in JS
