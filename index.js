@@ -1,3 +1,1 @@
-const cache = require('./src/cache');
-
-module.exports = cache;
+module.exports = require('./src/cache');

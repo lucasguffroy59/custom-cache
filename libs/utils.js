@@ -1,3 +1,5 @@
+/* Utils are functions non-specific to cache module */
+
 /**
  * Know if something is an object or not
  * @param {*} data The data you want to test
@@ -32,4 +34,20 @@ const cleanObject = (object) => {
   return newObject;
 };
 
-module.exports = { cleanObject, deepCloneObject, isObject };
+const objectExceededSize = (size) => {
+  return (object) => {
+    return Object.keys(object).length >= size;
+  };
+};
+
+const currentTimestamp = () => {
+  return Date.now();
+};
+
+module.exports = {
+  cleanObject,
+  deepCloneObject,
+  isObject,
+  objectExceededSize,
+  currentTimestamp,
+};

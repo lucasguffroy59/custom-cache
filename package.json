@@ -18,7 +18,14 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.21.2"
+    "eslint-plugin-import": "^2.21.2",
+    "husky": "^4.2.5"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  }
 }

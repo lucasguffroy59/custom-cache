@@ -1,9 +1,26 @@
+const cacheDefaultOptions = require('../config/defaultCacheConfig');
+const { objectExceededSize, currentTimestamp } = require('../libs/utils');
+const {
+  isCacheEmpty,
+  isCacheableKey,
+  isCacheableValue,
+  formatAddedValue,
+} = require('../libs/helpers');
+
+/**
+   * Cache class constructor
+   * @param {object} options Contains every options to customize the cache instance
+   * @return {*} A cache constructed object
+   */
 class Cache {
-  constructor(size = 100, permissive = false) {
+  constructor(options) {
     const self = this;
-    self.size = size;
-    self.permissive = permissive;
+    const { size, ttl } = options;
+    const { size: defaultSize, ttl: defaultTtl } = cacheDefaultOptions;
+    self.size = size || defaultSize;
+    self.ttl = ttl || defaultTtl;
     self.cacheStorage = {};
+    self.cacheExceededSize = objectExceededSize(self.size);
   }
 
   /**
@@ -14,10 +31,21 @@ class Cache {
    */
   set(key, value) {
     // If cache is full, interrupt process
-    if (Object.keys(this.cacheStorage).length >= this.size) return false;
+    if (this.cacheExceededSize(this.cacheStorage)) return false;
 
-    // If everything went well, add key/value to cache
-    this.cacheStorage[key] = value;
+    if (!isCacheableKey(key)) return false;
+
+    if (!isCacheableValue(value)) return false;
+
+    const cacheEntry = this.cacheStorage[key];
+
+    if (cacheEntry) {
+      cacheEntry.dateModified = currentTimestamp();
+      cacheEntry.value = value;
+      return true;
+    }
+
+    this.cacheStorage[key] = formatAddedValue(value);
     return true;
   }
 
@@ -30,13 +58,13 @@ class Cache {
    */
   add(key, value) {
     // If cache is full, interrupt process
-    if (Object.keys(this.cacheStorage).length >= this.size) return false;
+    if (this.cacheExceededSize(this.cacheStorage)) return false;
 
     // If cache entry already exists, interrupt process
     if (this.cacheStorage[key]) return false;
 
     // If everything went well, add key/value to cache
-    this.cacheStorage[key] = value;
+    this.cacheStorage[key] = formatAddedValue(value);
     return true;
   }
 
@@ -69,20 +97,21 @@ class Cache {
    * @return {*} The retrieved value from cache, or undefined
    */
   get(key) {
-    // Return the key from cache
-    return this.cacheStorage[key];
+    const cacheEntry = this.cacheStorage[key];
+    let element;
+    if (cacheEntry) element = cacheEntry.value;
+    return element;
   }
 
   /**
    * Get all cache content
-   * @return {*} The cache content, or null if it's empty
+   * @return {*} The cache content, or undefined if it's empty
    */
   getAll() {
-    // If cache is empty, return undefined
-    if (!Object.keys(this.cacheStorage).length) return undefined;
+    if (isCacheEmpty(this.cacheStorage)) return undefined;
 
     // Return the cache content
-    return this.cacheStorage;
+    return this.cacheStorage.map((aCacheEntry) => aCacheEntry.value);
   }
 }
 
