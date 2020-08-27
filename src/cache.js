@@ -16,7 +16,7 @@ class Cache {
   constructor(options) {
     const self = this;
     const { size: defaultSize, ttl: defaultTtl } = cacheDefaultOptions;
-    const { size = defaultSize, ttl = defaultTtl } = options;
+    const { size = defaultSize, ttl = defaultTtl } = options || {};
     self.size = size;
     self.ttl = ttl;
     self.cacheStorage = {};
