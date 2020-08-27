@@ -15,10 +15,10 @@ const {
 class Cache {
   constructor(options) {
     const self = this;
-    const { size, ttl } = options;
     const { size: defaultSize, ttl: defaultTtl } = cacheDefaultOptions;
-    self.size = size || defaultSize;
-    self.ttl = ttl || defaultTtl;
+    const { size = defaultSize, ttl = defaultTtl } = options;
+    self.size = size;
+    self.ttl = ttl;
     self.cacheStorage = {};
     self.cacheExceededSize = objectExceededSize(self.size);
   }
