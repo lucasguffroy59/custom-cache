@@ -37,8 +37,8 @@ const cacheExceededSize = (cache, size) => {
  */
 const keyIsCacheable = (key) => {
   const isString = utils.dataIsString(key);
-  const isLengthValid = utils.stringExceededLength(key, 255);
-  return isString && isLengthValid;
+  const lengthExceeded = utils.stringExceededLength(key, 255);
+  return isString && !lengthExceeded;
 };
 
 /**

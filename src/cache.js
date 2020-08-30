@@ -59,6 +59,10 @@ class Cache {
   add(key, value) {
     if (cacheExceededSize(this.cacheStorage, this.size)) return false;
 
+    if (!keyIsCacheable(key)) return false;
+
+    if (!valueIsCacheable(value)) return false;
+
     // If cache entry already exists, interrupt process
     if (this.cacheStorage[key]) return false;
 
