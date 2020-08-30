@@ -1,18 +1,20 @@
 const cacheDefaultOptions = require('../config/defaultCacheConfig');
-const { objectExceededSize, currentTimestamp } = require('../libs/utils');
+const { currentTimestamp } = require('../libs/utils');
 const {
-  isCacheEmpty,
-  isCacheableKey,
-  isCacheableValue,
+  cacheIsEmpty,
+  cacheExceededSize,
+  keyIsCacheable,
+  valueIsCacheable,
   formatAddedValue,
+  formatReturnedCacheContent,
 } = require('../libs/helpers');
 
-/**
-   * Cache class constructor
-   * @param {object} options Contains every options to customize the cache instance
-   * @return {*} A cache constructed object
-   */
 class Cache {
+  /**
+   * Cache class constructor
+   * @constructs Cache
+   * @param {object=} options Contains every options to customize the cache instance
+   */
   constructor(options) {
     const self = this;
     const { size: defaultSize, ttl: defaultTtl } = cacheDefaultOptions;
@@ -20,7 +22,6 @@ class Cache {
     self.size = size;
     self.ttl = ttl;
     self.cacheStorage = {};
-    self.cacheExceededSize = objectExceededSize(self.size);
   }
 
   /**
@@ -30,12 +31,11 @@ class Cache {
    * @return {boolean} True if successfuly set to cache, false if cache full
    */
   set(key, value) {
-    // If cache is full, interrupt process
-    if (this.cacheExceededSize(this.cacheStorage)) return false;
+    if (cacheExceededSize(this.cacheStorage, this.size)) return false;
 
-    if (!isCacheableKey(key)) return false;
+    if (!keyIsCacheable(key)) return false;
 
-    if (!isCacheableValue(value)) return false;
+    if (!valueIsCacheable(value)) return false;
 
     const cacheEntry = this.cacheStorage[key];
 
@@ -57,8 +57,7 @@ class Cache {
    * false if cache full or if key already exists in cache
    */
   add(key, value) {
-    // If cache is full, interrupt process
-    if (this.cacheExceededSize(this.cacheStorage)) return false;
+    if (cacheExceededSize(this.cacheStorage, this.size)) return false;
 
     // If cache entry already exists, interrupt process
     if (this.cacheStorage[key]) return false;
@@ -108,10 +107,9 @@ class Cache {
    * @return {*} The cache content, or undefined if it's empty
    */
   getAll() {
-    if (isCacheEmpty(this.cacheStorage)) return undefined;
-
-    // Return the cache content
-    return this.cacheStorage.map((aCacheEntry) => aCacheEntry.value);
+    if (cacheIsEmpty(this.cacheStorage)) return undefined;
+    const exploitableCacheContent = formatReturnedCacheContent(this.cacheStorage);
+    return exploitableCacheContent;
   }
 }
 
