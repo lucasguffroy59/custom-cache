@@ -26,6 +26,7 @@ const cacheIsEmpty = (cache) => {
  * @return {boolean} True if it exceeded set size, or false
  */
 const cacheExceededSize = (cache, size) => {
+  if (size === -1) return false;
   const exceededSize = utils.objectExceededSize(cache, size);
   return exceededSize;
 };
@@ -62,8 +63,12 @@ const formatAddedValue = (value) => {
   return { value, dateAdded, dateModified };
 };
 
+const getCacheEntryValue = (cacheEntry) => {
+  return cacheEntry.value;
+};
+
 const formatReturnedCacheContent = (cache) => {
-  const exploitableCacheContent = cache.map((aCacheEntry) => aCacheEntry.value);
+  const exploitableCacheContent = Object.entries(cache).map(getCacheEntryValue);
   return exploitableCacheContent;
 };
 

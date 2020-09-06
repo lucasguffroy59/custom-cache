@@ -1,4 +1,4 @@
-const cacheDefaultOptions = require('../config/defaultCacheConfig');
+const { size: defaultSize, ttl: defaultTtl } = require('../config/defaultCacheConfig');
 const { currentTimestamp } = require('../libs/utils');
 const {
   cacheIsEmpty,
@@ -15,13 +15,12 @@ class Cache {
    * @constructs Cache
    * @param {object=} options Contains every options to customize the cache instance
    */
-  constructor(options) {
-    const self = this;
-    const { size: defaultSize, ttl: defaultTtl } = cacheDefaultOptions;
-    const { size = defaultSize, ttl = defaultTtl } = options || {};
-    self.size = size;
-    self.ttl = ttl;
-    self.cacheStorage = {};
+  constructor({ size = defaultSize, ttl = defaultTtl }) {
+    this.options = {
+      size,
+      ttl,
+    };
+    this.cacheStorage = {};
   }
 
   /**
@@ -31,10 +30,10 @@ class Cache {
    * @return {boolean} True if successfuly set to cache, false if cache full
    */
   set(key, value) {
-    if (cacheExceededSize(this.cacheStorage, this.size)) return false;
+    const { size } = this.options;
 
+    if (cacheExceededSize(this.cacheStorage, size)) return false;
     if (!keyIsCacheable(key)) return false;
-
     if (!valueIsCacheable(value)) return false;
 
     const cacheEntry = this.cacheStorage[key];
@@ -57,16 +56,14 @@ class Cache {
    * false if cache full or if key already exists in cache
    */
   add(key, value) {
-    if (cacheExceededSize(this.cacheStorage, this.size)) return false;
+    const { size } = this.options;
 
+    if (cacheExceededSize(this.cacheStorage, size)) return false;
     if (!keyIsCacheable(key)) return false;
-
     if (!valueIsCacheable(value)) return false;
 
-    // If cache entry already exists, interrupt process
     if (this.cacheStorage[key]) return false;
 
-    // If everything went well, add key/value to cache
     this.cacheStorage[key] = formatAddedValue(value);
     return true;
   }
@@ -77,10 +74,8 @@ class Cache {
    * @return {boolean} True if successfuly removed from cache, false if key doesn't exist in cache
    */
   remove(key) {
-    // If cache entry doesn't exist, interrupt process
     if (!this.cacheStorage[key]) return false;
 
-    // If everything went well, delete key from cache
     delete this.cacheStorage[key];
     return true;
   }
